@@ -1,3 +1,9 @@
 2023-05-06 01:16:06 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]# NOINSPECTION SQLNODATASOURCEINSPECTIONFORFILE "; SQL statement:
 # noinspection SqlNoDataSourceInspectionForFile [42000-199]
+2023-05-06 14:52:10 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TASK_GROUP" not found; SQL statement:
+select taskgroup0_.id as id1_1_, taskgroup0_.deleted as deleted2_1_, taskgroup0_.name as name3_1_, taskgroup0_.user as user4_1_ from task_group taskgroup0_ [42102-199]
+2023-05-06 14:52:24 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TASK_GROUP" not found; SQL statement:
+insert into task_group (id, deleted, name, user) values (null, ?, ?, ?) [42102-199]

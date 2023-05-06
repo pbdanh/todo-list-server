@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
-@Table(name = "task_list")
-public class TaskList {
+@Table(name = "task_group")
+public class TaskGroup {
    @Id
    @GeneratedValue (strategy = GenerationType.IDENTITY)
    private Long id;
@@ -59,8 +59,8 @@ public class TaskList {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-      TaskList taskList = (TaskList) o;
-      return deleted == taskList.deleted && Objects.equals(id, taskList.id) && Objects.equals(name, taskList.name) && Objects.equals(user, taskList.user);
+      TaskGroup taskGroup = (TaskGroup) o;
+      return deleted == taskGroup.deleted && Objects.equals(id, taskGroup.id) && Objects.equals(name, taskGroup.name) && Objects.equals(user, taskGroup.user);
    }
 
    @Override
@@ -70,7 +70,7 @@ public class TaskList {
 
    @Override
    public String toString() {
-      return "TaskList{" +
+      return "TaskGroup{" +
          "id=" + id +
          ", name='" + name + '\'' +
          ", deleted=" + deleted +

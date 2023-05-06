@@ -1,24 +1,24 @@
 package org.zerhusen.rest.dto;
 
-import org.zerhusen.domain.TaskList;
+import org.zerhusen.domain.TaskGroup;
 
 import java.util.Objects;
 
-public class TaskListDTO {
+public class TaskGroupDTO {
 
-   public TaskListDTO() {
+   public TaskGroupDTO() {
 
    }
-   public TaskListDTO(TaskList taskList) {
-      this.id = taskList.getId();
-      this.name = taskList.getName();
+   public TaskGroupDTO(TaskGroup taskGroup) {
+      this.id = taskGroup.getId();
+      this.name = taskGroup.getName();
    }
 
-   TaskList toEntity() {
-      TaskList taskList = new TaskList();
-      taskList.setName(this.name);
-      taskList.setId(this.id);
-      return taskList;
+   TaskGroup toEntity() {
+      TaskGroup taskGroup = new TaskGroup();
+      taskGroup.setName(this.name);
+      taskGroup.setId(this.id);
+      return taskGroup;
    }
    private Long id;
 
@@ -44,7 +44,7 @@ public class TaskListDTO {
    public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-      TaskListDTO that = (TaskListDTO) o;
+      TaskGroupDTO that = (TaskGroupDTO) o;
       return Objects.equals(id, that.id) && Objects.equals(name, that.name);
    }
 
@@ -55,7 +55,7 @@ public class TaskListDTO {
 
    @Override
    public String toString() {
-      return "TaskListDTO{" +
+      return "TaskGroupDTO{" +
          "id=" + id +
          ", name='" + name + '\'' +
          '}';
