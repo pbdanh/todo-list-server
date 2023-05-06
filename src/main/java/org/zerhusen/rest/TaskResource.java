@@ -1,9 +1,11 @@
 package org.zerhusen.rest;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.zerhusen.domain.Task;
+import org.zerhusen.domain.TaskGroup;
+import org.zerhusen.repository.TaskGroupRepository;
+import org.zerhusen.repository.TaskRepository;
 import org.zerhusen.rest.dto.TaskDTO;
 
 import java.util.ArrayList;
@@ -12,21 +14,42 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class TaskResource {
+
+   TaskGroupRepository taskGroupRepository;
+
+   TaskRepository taskRepository;
+
+   public TaskResource(TaskGroupRepository taskGroupRepository, TaskRepository taskRepository) {
+      this.taskGroupRepository = taskGroupRepository;
+      this.taskRepository = taskRepository;
+   }
+
    @GetMapping("/tasks")
-   public ResponseEntity<List<TaskDTO>> getTasks() {
+   public ResponseEntity<List<TaskDTO>> getTasks(@RequestParam(name = "taskGroupId") Long taskGroupId) {
+      TaskGroup taskGroup = taskGroupRepository.findOneById(taskGroupId).get();
+      List<Task> tasks = taskRepository.findTaskByTaskGroup(taskGroup);
+
+
       List<TaskDTO> res = new ArrayList<>();
-      res.add(new TaskDTO(1L, "day la taks 1"));
-      res.add(new TaskDTO(3L, "daasdfjls 1"));
-
-      res.add(new TaskDTO(4L, "daysdfafks 1fsd"));
-
-      res.add(new TaskDTO(6L, "day la taks fasdjfkj"));
-
-      res.add(new TaskDTO(7L, "day la takfasjdfk "));
-      res.add(new TaskDTO(12L, "day la takssjdfkj"));
+      for(Task task: tasks) {
+         res.add(new TaskDTO(task.getId(), task.getTitle(), task.getTaskGroup().getId()));
+      }
 
 
 
       return ResponseEntity.ok(res);
+   }
+
+   @PostMapping("/task")
+   public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO) {
+
+      Task newTask = new Task();
+      newTask.setTitle(taskDTO.getTitle());
+      newTask.setComplete(false);
+      TaskGroup taskGroup = taskGroupRepository.getOne(taskDTO.getTaskGroupId());
+      newTask.setTaskGroup(taskGroup);
+      newTask = taskRepository.save(newTask);
+      TaskDTO response = new TaskDTO(newTask.getId(), newTask.getTitle(), newTask.getTaskGroup().getId());
+      return ResponseEntity.ok(response);
    }
 }

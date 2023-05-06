@@ -9,14 +9,17 @@ public class TaskDTO {
    public TaskDTO() {
    }
 
-   public TaskDTO(Long id, String title) {
+   public TaskDTO(Long id, String title, Long taskGroupId) {
       this.id = id;
       this.title = title;
+      this.taskGroupId = taskGroupId;
    }
 
    private Long id;
 
    private String title;
+
+   private Long taskGroupId;
 
    public Long getId() {
       return id;
@@ -34,24 +37,13 @@ public class TaskDTO {
       this.title = title;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      TaskDTO taskDTO = (TaskDTO) o;
-      return Objects.equals(id, taskDTO.id) && Objects.equals(title, taskDTO.title);
+   public Long getTaskGroupId() {
+      return taskGroupId;
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hash(id, title);
+   public void setTaskGroupId(Long taskGroupId) {
+      this.taskGroupId = taskGroupId;
    }
 
-   @Override
-   public String toString() {
-      return "TaskDTO{" +
-         "id=" + id +
-         ", title='" + title + '\'' +
-         '}';
-   }
+
 }

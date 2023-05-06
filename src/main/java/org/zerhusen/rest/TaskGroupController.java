@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zerhusen.security.SecurityUtils;
 import org.zerhusen.domain.TaskGroup;
 import org.zerhusen.security.model.User;
-import org.zerhusen.repository.TaskListRepository;
+import org.zerhusen.repository.TaskGroupRepository;
 import org.zerhusen.security.repository.UserRepository;
 import org.zerhusen.rest.dto.TaskGroupDTO;
 
@@ -16,18 +16,18 @@ import java.util.List;
 @RequestMapping("/api")
 public class TaskGroupController {
 
-   TaskListRepository taskListRepository;
+   TaskGroupRepository taskGroupRepository;
 
    UserRepository userRepository;
 
-   public TaskGroupController(TaskListRepository taskListRepository, UserRepository userRepository) {
-      this.taskListRepository = taskListRepository;
+   public TaskGroupController(TaskGroupRepository taskGroupRepository, UserRepository userRepository) {
+      this.taskGroupRepository = taskGroupRepository;
       this.userRepository = userRepository;
    }
 
    @GetMapping("/taskGroup")
    public ResponseEntity<List<TaskGroupDTO>> getCurrentUserTaskList() {
-      List<TaskGroup> lists = taskListRepository.findAll();
+      List<TaskGroup> lists = taskGroupRepository.findAll();
       List<TaskGroupDTO> response = new ArrayList<>();
       for(TaskGroup taskGroup : lists) {
          if(taskGroup.getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get()) && !taskGroup.isDeleted()) {
@@ -45,24 +45,24 @@ public class TaskGroupController {
       String currentUserUserName = SecurityUtils.getCurrentUsername().get();
       User currentUser = userRepository.findOneWithAuthoritiesByUsername(currentUserUserName).get();
       taskGroup.setUser(currentUser);
-      taskGroup = taskListRepository.save(taskGroup);
+      taskGroup = taskGroupRepository.save(taskGroup);
       return ResponseEntity.ok(new TaskGroupDTO(taskGroup));
    }
 
    @DeleteMapping("/taskGroup")
    public void deleteTaskList(@RequestParam(name = "id") Long id) {
-      TaskGroup taskGroup = taskListRepository.findOneById(id).get();
+      TaskGroup taskGroup = taskGroupRepository.findOneById(id).get();
 //      if(taskList.getUser().getUsername().equals(SecurityUtils.getCurrentUsername())) {
          taskGroup.setDeleted(true);
-         taskListRepository.save(taskGroup);
+         taskGroupRepository.save(taskGroup);
 //      }
    }
 
    @PutMapping("/taskGroup")
    public ResponseEntity<TaskGroupDTO> updateTaskListName(@RequestBody TaskGroupDTO taskGroupDTO) {
-      TaskGroup taskGroup = taskListRepository.findOneById(taskGroupDTO.getId()).get();
+      TaskGroup taskGroup = taskGroupRepository.findOneById(taskGroupDTO.getId()).get();
       taskGroup.setName(taskGroupDTO.getName());
-      taskGroup = taskListRepository.save(taskGroup);
+      taskGroup = taskGroupRepository.save(taskGroup);
       return  ResponseEntity.ok(new TaskGroupDTO(taskGroup));
    }
 
