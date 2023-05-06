@@ -1,8 +1,8 @@
-package org.zerhusen.security.repository;
+package org.zerhusen.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.zerhusen.security.model.TaskList;
+import org.zerhusen.domain.TaskList;
 
 import java.util.List;
 import java.util.Optional;

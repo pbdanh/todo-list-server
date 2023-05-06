@@ -1,15 +1,14 @@
-package org.zerhusen.security.rest;
+package org.zerhusen.rest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zerhusen.security.SecurityUtils;
-import org.zerhusen.security.model.TaskList;
+import org.zerhusen.domain.TaskList;
 import org.zerhusen.security.model.User;
-import org.zerhusen.security.repository.TaskListRepository;
+import org.zerhusen.repository.TaskListRepository;
 import org.zerhusen.security.repository.UserRepository;
-import org.zerhusen.security.rest.dto.TaskListDTO;
+import org.zerhusen.rest.dto.TaskListDTO;
 
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +52,10 @@ public class TaskListController {
    @DeleteMapping("/taskList")
    public void deleteTaskList(@RequestParam(name = "id") Long id) {
       TaskList taskList = taskListRepository.findOneById(id).get();
-      if(taskList.getUser().getUsername().equals(SecurityUtils.getCurrentUsername())) {
+//      if(taskList.getUser().getUsername().equals(SecurityUtils.getCurrentUsername())) {
          taskList.setDeleted(true);
          taskListRepository.save(taskList);
-      }
+//      }
    }
 
    @PutMapping("/taskList")

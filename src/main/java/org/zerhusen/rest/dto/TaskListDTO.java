@@ -1,6 +1,6 @@
-package org.zerhusen.security.rest.dto;
+package org.zerhusen.rest.dto;
 
-import org.zerhusen.security.model.TaskList;
+import org.zerhusen.domain.TaskList;
 
 import java.util.Objects;
 
