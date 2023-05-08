@@ -2,7 +2,6 @@ package org.zerhusen.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
 
 @Entity
 @Table(name = "task")
@@ -17,6 +16,13 @@ public class Task {
    @NotNull
    private boolean complete;
 
+   private String note;
+
+   @NotNull
+   private boolean important;
+
+   @NotNull
+   private boolean deleted;
    @ManyToOne
    @JoinColumn(name = "task_group")
    private TaskGroup taskGroup;
@@ -53,26 +59,27 @@ public class Task {
       this.taskGroup = taskGroup;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Task task = (Task) o;
-      return complete == task.complete && Objects.equals(id, task.id) && Objects.equals(title, task.title) && Objects.equals(taskGroup, task.taskGroup);
+   public boolean isDeleted() {
+      return deleted;
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hash(id, title, complete, taskGroup);
+   public void setDeleted(boolean deleted) {
+      this.deleted = deleted;
    }
 
-   @Override
-   public String toString() {
-      return "Task{" +
-         "id=" + id +
-         ", title='" + title + '\'' +
-         ", complete=" + complete +
-         ", taskGroup=" + taskGroup +
-         '}';
+   public String getNote() {
+      return note;
+   }
+
+   public void setNote(String note) {
+      this.note = note;
+   }
+
+   public boolean isImportant() {
+      return important;
+   }
+
+   public void setImportant(boolean important) {
+      this.important = important;
    }
 }

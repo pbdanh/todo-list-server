@@ -17,6 +17,9 @@ public class TaskGroup {
    private String name;
 
    @NotNull
+   private Boolean mainTaskGroup;
+
+   @NotNull
    private boolean deleted;
 
    @ManyToOne
@@ -55,26 +58,11 @@ public class TaskGroup {
       this.deleted = deleted;
    }
 
-   @Override
-   public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      TaskGroup taskGroup = (TaskGroup) o;
-      return deleted == taskGroup.deleted && Objects.equals(id, taskGroup.id) && Objects.equals(name, taskGroup.name) && Objects.equals(user, taskGroup.user);
+   public Boolean getMainTaskGroup() {
+      return mainTaskGroup;
    }
 
-   @Override
-   public int hashCode() {
-      return Objects.hash(id, name, deleted, user);
-   }
-
-   @Override
-   public String toString() {
-      return "TaskGroup{" +
-         "id=" + id +
-         ", name='" + name + '\'' +
-         ", deleted=" + deleted +
-         ", user=" + user +
-         '}';
+   public void setMainTaskGroup(Boolean mainTaskGroup) {
+      this.mainTaskGroup = mainTaskGroup;
    }
 }

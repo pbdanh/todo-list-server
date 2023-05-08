@@ -7,5 +7,5 @@ import org.zerhusen.domain.TaskGroup;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
-   public List<Task> findTaskByTaskGroup(TaskGroup taskGroup);
+   public List<Task> findTaskByTaskGroupAndDeleted(TaskGroup taskGroup, Boolean deleted);
 }

@@ -9,17 +9,43 @@ public class TaskDTO {
    public TaskDTO() {
    }
 
-   public TaskDTO(Long id, String title, Long taskGroupId) {
-      this.id = id;
-      this.title = title;
-      this.taskGroupId = taskGroupId;
-   }
+
 
    private Long id;
 
    private String title;
 
    private Long taskGroupId;
+
+   private Boolean complete;
+
+   private Boolean important;
+
+   private String note;
+
+   public Boolean getComplete() {
+      return complete;
+   }
+
+   public void setComplete(Boolean complete) {
+      this.complete = complete;
+   }
+
+   public Boolean getImportant() {
+      return important;
+   }
+
+   public void setImportant(Boolean important) {
+      this.important = important;
+   }
+
+   public String getNote() {
+      return note;
+   }
+
+   public void setNote(String note) {
+      this.note = note;
+   }
 
    public Long getId() {
       return id;

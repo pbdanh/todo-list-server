@@ -9,10 +9,7 @@ public class TaskGroupDTO {
    public TaskGroupDTO() {
 
    }
-   public TaskGroupDTO(TaskGroup taskGroup) {
-      this.id = taskGroup.getId();
-      this.name = taskGroup.getName();
-   }
+
 
    TaskGroup toEntity() {
       TaskGroup taskGroup = new TaskGroup();

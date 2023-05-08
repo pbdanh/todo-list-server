@@ -31,7 +31,10 @@ public class TaskGroupController {
       List<TaskGroupDTO> response = new ArrayList<>();
       for(TaskGroup taskGroup : lists) {
          if(taskGroup.getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get()) && !taskGroup.isDeleted()) {
-            response.add(new TaskGroupDTO(taskGroup));
+            TaskGroupDTO taskGroupDTO = new TaskGroupDTO();
+            taskGroupDTO.setId(taskGroup.getId());
+            taskGroupDTO.setName(taskGroup.getName());
+            response.add(taskGroupDTO);
          }
       }
       return ResponseEntity.ok(response);
@@ -42,11 +45,15 @@ public class TaskGroupController {
       TaskGroup taskGroup = new TaskGroup();
       taskGroup.setName(taskGroupDTO.getName());
       taskGroup.setDeleted(false);
+      taskGroup.setMainTaskGroup(false);
       String currentUserUserName = SecurityUtils.getCurrentUsername().get();
       User currentUser = userRepository.findOneWithAuthoritiesByUsername(currentUserUserName).get();
       taskGroup.setUser(currentUser);
       taskGroup = taskGroupRepository.save(taskGroup);
-      return ResponseEntity.ok(new TaskGroupDTO(taskGroup));
+      TaskGroupDTO res = new TaskGroupDTO();
+      res.setId(taskGroup.getId());
+      res.setName(taskGroup.getName());
+      return ResponseEntity.ok(res);
    }
 
    @DeleteMapping("/taskGroup")
@@ -63,7 +70,10 @@ public class TaskGroupController {
       TaskGroup taskGroup = taskGroupRepository.findOneById(taskGroupDTO.getId()).get();
       taskGroup.setName(taskGroupDTO.getName());
       taskGroup = taskGroupRepository.save(taskGroup);
-      return  ResponseEntity.ok(new TaskGroupDTO(taskGroup));
+      TaskGroupDTO res = new TaskGroupDTO();
+      res.setId(taskGroup.getId());
+      res.setName(taskGroup.getName());
+      return  ResponseEntity.ok(res);
    }
 
 }
