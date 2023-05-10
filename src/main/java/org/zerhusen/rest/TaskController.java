@@ -53,6 +53,29 @@ public class TaskController {
 
 
 
+
+      return ResponseEntity.ok(res);
+   }
+
+   @GetMapping("/importantTasks")
+   public ResponseEntity<List<TaskDTO>> getImportantTasks() {
+//      TaskGroup taskGroup = taskGroupRepository.findOneById(taskGroupId).get();
+      List<Task> tasks = taskRepository.findTaskByImportantAndDeleted(true, false);
+      List<TaskDTO> res = new ArrayList<>();
+      for(Task task: tasks) {
+         TaskDTO taskDTO = new TaskDTO();
+         taskDTO.setId(task.getId());
+         taskDTO.setTitle(task.getTitle());
+         taskDTO.setComplete(task.isComplete());
+         taskDTO.setImportant(task.isImportant());
+         taskDTO.setNote(task.getNote());
+         taskDTO.setTaskGroupId(task.getTaskGroup().getId());
+         res.add(taskDTO);
+      }
+
+
+
+
       return ResponseEntity.ok(res);
    }
 

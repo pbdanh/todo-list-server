@@ -33,7 +33,6 @@ public class RegisterController {
    @PostMapping("/register")
    public void register(@RequestBody RegisterDTO registerDTO){
       User user = new User();
-      user.setId(123L);
       user.setUsername(registerDTO.getUsername());
       user.setEmail(registerDTO.getEmail());
       user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));

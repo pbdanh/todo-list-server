@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
    public List<Task> findTaskByTaskGroupAndDeleted(TaskGroup taskGroup, Boolean deleted);
+
+   public List<Task> findTaskByImportantAndDeleted(Boolean important, Boolean deleted);
 }

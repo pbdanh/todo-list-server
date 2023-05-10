@@ -1,36 +1,10 @@
 package org.zerhusen.rest.dto;
 
-import java.util.Objects;
-
-public class RegisterDTO {
-
-   private String username;
-   private String password;
-
+public class UserDTO {
    private String firstName;
-
    private String lastName;
 
    private String email;
-
-   public RegisterDTO() {
-   }
-
-   public String getUsername() {
-      return username;
-   }
-
-   public void setUsername(String username) {
-      this.username = username;
-   }
-
-   public String getPassword() {
-      return password;
-   }
-
-   public void setPassword(String password) {
-      this.password = password;
-   }
 
    public String getFirstName() {
       return firstName;
@@ -56,5 +30,12 @@ public class RegisterDTO {
       this.email = email;
    }
 
-
+   @Override
+   public String toString() {
+      return "UserDTO{" +
+         "firstName='" + firstName + '\'' +
+         ", lastName='" + lastName + '\'' +
+         ", email='" + email + '\'' +
+         '}';
+   }
 }
