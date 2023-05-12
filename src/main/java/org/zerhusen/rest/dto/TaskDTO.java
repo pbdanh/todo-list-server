@@ -1,6 +1,8 @@
 package org.zerhusen.rest.dto;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class TaskDTO {
@@ -13,6 +15,7 @@ public class TaskDTO {
 
    private Long id;
 
+   private LocalDate dueDate;
    private String title;
 
    private Long taskGroupId;
@@ -72,4 +75,11 @@ public class TaskDTO {
    }
 
 
+   public LocalDate getDueDate() {
+      return dueDate;
+   }
+
+   public void setDueDate(LocalDate dueDate) {
+      this.dueDate = dueDate;
+   }
 }

@@ -1,10 +1,14 @@
 package org.zerhusen.rest;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.zerhusen.ConstantError;
 import org.zerhusen.rest.dto.PasswordDTO;
 import org.zerhusen.rest.dto.UserDTO;
 import org.zerhusen.security.SecurityUtils;
@@ -25,7 +29,14 @@ public class UserController {
    }
 
    @PutMapping("/user")
-   public void updateUser(@RequestBody UserDTO userDTO) {
+   public ResponseEntity<String> updateUser(@RequestBody UserDTO userDTO) {
+
+      if(userRepository.findOneByEmail(userDTO.getEmail()).isPresent()) {
+         HttpHeaders headers = new HttpHeaders();
+         headers.add("Error-Code", String.valueOf(ConstantError.USERNAME_ALREADY_EXISTS));
+         return ResponseEntity.status(HttpStatus.OK)
+            .headers(headers).body("Email already exists or used by current user");
+      }
 
       String currentUsername = SecurityUtils.getCurrentUsername().get();
       User currentUser = userRepository.findOneWithAuthoritiesByUsername(currentUsername).get();
@@ -33,10 +44,11 @@ public class UserController {
       currentUser.setLastname(userDTO.getLastName());
       currentUser.setEmail(userDTO.getEmail());
       userRepository.save(currentUser);
+      return ResponseEntity.ok().body("Success");
    }
 
    @PutMapping("/changePassword")
-   public void changePassword(@RequestBody PasswordDTO passwordDTO) {
+   public ResponseEntity<String> changePassword(@RequestBody PasswordDTO passwordDTO) {
       String currentUsername = SecurityUtils.getCurrentUsername().get();
       User currentUser = userRepository.findOneWithAuthoritiesByUsername(currentUsername).get();
       System.out.println(passwordEncoder.encode(passwordDTO.getCurrentPassword()));
@@ -44,6 +56,10 @@ public class UserController {
       if(passwordEncoder.matches(passwordDTO.getCurrentPassword(), currentUser.getPassword())) {
          currentUser.setPassword(passwordEncoder.encode(passwordDTO.getNewPassword()));
          userRepository.save(currentUser);
+         return ResponseEntity.ok().body("Success");
       }
+
+         return ResponseEntity.ok().body("Wrong current password!");
+
    }
 }

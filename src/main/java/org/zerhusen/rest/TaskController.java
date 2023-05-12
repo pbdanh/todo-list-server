@@ -1,5 +1,6 @@
 package org.zerhusen.rest;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zerhusen.domain.TaskGroup;
@@ -12,7 +13,10 @@ import org.zerhusen.security.SecurityUtils;
 import org.zerhusen.security.model.User;
 import org.zerhusen.security.repository.UserRepository;
 
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
 import java.security.Security;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +52,7 @@ public class TaskController {
          taskDTO.setImportant(task.isImportant());
          taskDTO.setNote(task.getNote());
          taskDTO.setTaskGroupId(taskGroupId);
+         taskDTO.setDueDate(task.getDueDate());
          res.add(taskDTO);
       }
 
@@ -59,10 +64,14 @@ public class TaskController {
 
    @GetMapping("/importantTasks")
    public ResponseEntity<List<TaskDTO>> getImportantTasks() {
-//      TaskGroup taskGroup = taskGroupRepository.findOneById(taskGroupId).get();
       List<Task> tasks = taskRepository.findTaskByImportantAndDeleted(true, false);
       List<TaskDTO> res = new ArrayList<>();
       for(Task task: tasks) {
+//         System.out.println("currentUsername: " + SecurityUtils.getCurrentUsername().get());
+//         System.out.println("User w task: " + task.getTaskGroup().getUser().getUsername());
+         if (task.getTaskGroup().getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get())
+            && !task.getTaskGroup().isDeleted()
+            && !task.isComplete()) {
          TaskDTO taskDTO = new TaskDTO();
          taskDTO.setId(task.getId());
          taskDTO.setTitle(task.getTitle());
@@ -70,14 +79,46 @@ public class TaskController {
          taskDTO.setImportant(task.isImportant());
          taskDTO.setNote(task.getNote());
          taskDTO.setTaskGroupId(task.getTaskGroup().getId());
+         taskDTO.setDueDate(task.getDueDate());
          res.add(taskDTO);
+        }
       }
-
-
-
-
       return ResponseEntity.ok(res);
    }
+
+   @GetMapping("/dueTodayTasks")
+   public ResponseEntity<List<TaskDTO>> getDueTodayTasks() {
+      List<Task> tasks = taskRepository.findTaskByDeleted(false);
+      List<TaskDTO> res = new ArrayList<>();
+      for(Task task: tasks) {
+         if(task.getDueDate() != null) {
+            if (task.getTaskGroup().getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get())
+               && !task.getTaskGroup().isDeleted()
+               && task.getDueDate().isEqual(LocalDate.now())
+               && !task.isComplete()) {
+
+               TaskDTO taskDTO = new TaskDTO();
+               taskDTO.setId(task.getId());
+               taskDTO.setTitle(task.getTitle());
+               taskDTO.setComplete(task.isComplete());
+               taskDTO.setImportant(task.isImportant());
+               taskDTO.setNote(task.getNote());
+               taskDTO.setTaskGroupId(task.getTaskGroup().getId());
+               taskDTO.setDueDate(task.getDueDate());
+               res.add(taskDTO);
+            }
+         }
+
+      }
+      return ResponseEntity.ok(res);
+   }
+
+
+
+
+
+
+
 
    @PostMapping("/task")
    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO) {
@@ -88,6 +129,7 @@ public class TaskController {
       newTask.setImportant(false);
       newTask.setDeleted(false);
       newTask.setNote("");
+      newTask.setDueDate(taskDTO.getDueDate());
       TaskGroup taskGroup = taskGroupRepository.getOne(taskDTO.getTaskGroupId());
       newTask.setTaskGroup(taskGroup);
       newTask = taskRepository.save(newTask);
@@ -101,6 +143,7 @@ public class TaskController {
       response.setTitle(newTask.getTitle());
       response.setComplete(newTask.isComplete());
       response.setTaskGroupId(newTask.getTaskGroup().getId());
+      response.setDueDate(newTask.getDueDate());
       return ResponseEntity.ok(response);
    }
 
@@ -116,6 +159,7 @@ public class TaskController {
       Task task = taskRepository.findById(taskDTO.getId()).get();
       task.setTitle(taskDTO.getTitle());
       task.setNote(taskDTO.getNote());
+      task.setDueDate(taskDTO.getDueDate());
       taskRepository.save(task);
    }
 
@@ -163,5 +207,40 @@ public class TaskController {
       }
 
       return ResponseEntity.ok(res);
+   }
+
+   @GetMapping("/search")
+   public ResponseEntity<List<TaskDTO>> search(@RequestParam("keyword") String keyword) {
+      Specification<Task> spec = (root, query, criteriaBuilder) -> {
+         String[] keywords = keyword.split(" "); // Tách từ khóa thành mảng các từ
+         List<Predicate> predicates = new ArrayList<>();
+
+         // Tạo điều kiện tìm kiếm cho mỗi từ
+         for (String word : keywords) {
+            Expression<String> contentExpression = root.get("title");
+            Predicate predicate = criteriaBuilder.like(contentExpression, "%" + word + "%");
+            predicates.add(predicate);
+         }
+
+         // Kết hợp tất cả các điều kiện tìm kiếm bằng AND
+         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+      };
+
+      List<Task> tasks = taskRepository.findAll(spec);
+      List<TaskDTO> response = new ArrayList<>();
+      for(Task task: tasks) {
+         if(task.getTaskGroup().getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get())) {
+            TaskDTO taskDTO = new TaskDTO();
+            taskDTO.setDueDate(task.getDueDate());
+            taskDTO.setComplete(task.isComplete());
+            taskDTO.setTaskGroupId(task.getTaskGroup().getId());
+            taskDTO.setTitle(task.getTitle());
+            taskDTO.setNote(task.getNote());
+            taskDTO.setImportant(task.isImportant());
+            taskDTO.setId(task.getId());
+            response.add(taskDTO);
+         }
+      }
+      return ResponseEntity.ok().body(response);
    }
 }

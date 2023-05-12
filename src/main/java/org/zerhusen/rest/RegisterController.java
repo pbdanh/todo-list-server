@@ -1,10 +1,14 @@
 package org.zerhusen.rest;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.zerhusen.ConstantError;
 import org.zerhusen.rest.dto.RegisterDTO;
 import org.zerhusen.security.model.Authority;
 import org.zerhusen.security.model.User;
@@ -31,9 +35,23 @@ public class RegisterController {
       this.authorityRepository = authorityRepository;
    }
    @PostMapping("/register")
-   public void register(@RequestBody RegisterDTO registerDTO){
+   public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO){
       User user = new User();
+      if(userRepository.findOneByUsername(registerDTO.getUsername()).isPresent()) {
+         HttpHeaders headers = new HttpHeaders();
+         headers.add("Error-Code", String.valueOf(ConstantError.USERNAME_ALREADY_EXISTS));
+         return ResponseEntity.status(HttpStatus.OK)
+            .headers(headers).body("Username already exists");
+      }
       user.setUsername(registerDTO.getUsername());
+
+
+      if(userRepository.findOneByEmail(registerDTO.getEmail()).isPresent()) {
+         HttpHeaders headers = new HttpHeaders();
+         headers.add("Error-Code", String.valueOf(ConstantError.EMAIL_ALREADY_EXISTS));
+         return ResponseEntity.status(HttpStatus.OK)
+            .headers(headers).body("Email already exists");
+      }
       user.setEmail(registerDTO.getEmail());
       user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
       user.setFirstname(registerDTO.getFirstName());
@@ -46,5 +64,6 @@ public class RegisterController {
       authorities.add(authority);
       user.setAuthorities(authorities);
       userRepository.save(user);
+      return ResponseEntity.ok().body("Successful");
    }
 }

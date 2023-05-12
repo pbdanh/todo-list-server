@@ -2,6 +2,8 @@ package org.zerhusen.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "task")
@@ -12,6 +14,8 @@ public class Task {
 
    @NotNull
    private String title;
+
+   private LocalDate dueDate;
 
    @NotNull
    private boolean complete;
@@ -81,5 +85,13 @@ public class Task {
 
    public void setImportant(boolean important) {
       this.important = important;
+   }
+
+   public LocalDate getDueDate() {
+      return dueDate;
+   }
+
+   public void setDueDate(LocalDate dueDate) {
+      this.dueDate = dueDate;
    }
 }
