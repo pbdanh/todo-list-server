@@ -227,7 +227,8 @@ public class TaskController {
       List<Task> tasks = taskRepository.findAll(spec);
       List<TaskDTO> response = new ArrayList<>();
       for(Task task: tasks) {
-         if(task.getTaskGroup().getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get())) {
+         if(task.getTaskGroup().getUser().getUsername().equals(SecurityUtils.getCurrentUsername().get())
+         && !task.getTaskGroup().isDeleted()) {
             TaskDTO taskDTO = new TaskDTO();
             taskDTO.setDueDate(task.getDueDate());
             taskDTO.setComplete(task.isComplete());
